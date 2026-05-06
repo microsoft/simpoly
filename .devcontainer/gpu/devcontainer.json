@@ -1,0 +1,66 @@
+{
+    "name": "simpoly-gpu",
+    "build": {
+        "dockerfile": "../../Dockerfile",
+        "context": "../.."
+    },
+    "postCreateCommand": "",
+    "containerEnv": {
+        "PYTHONPATH": "${containerWorkspaceFolder}/src/"
+    },
+    "mounts": [],
+    "runArgs": [
+        "--shm-size=2gb",
+        "--network=host",
+        "--gpus=all"
+    ],
+    "forwardPorts": [],
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": false,
+            "installOhMyZsh": false,
+            "upgradePackages": false
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "charliermarsh.ruff",
+                "ms-toolsai.jupyter",
+                "be5invis.toml",
+                "redhat.vscode-yaml",
+                "yzhang.markdown-all-in-one",
+                "streetsidesoftware.code-spell-checker",
+                "github.copilot-chat"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/opt/miniforge3/envs/simpoly/bin/python",
+                "[python]": {
+                    "editor.formatOnSave": true,
+                    "editor.defaultFormatter": "charliermarsh.ruff"
+                },
+                "notebook.formatOnSave.enabled": true,
+                "python.analysis.typeCheckingMode": "basic",
+                "python.analysis.diagnosticMode": "workspace",
+                "python.analysis.autoSearchPaths": false,
+                "python.analysis.include": [
+                    "${containerWorkspaceFolder}/src",
+                    "${containerWorkspaceFolder}/tests"
+                ],
+                "python.analysis.exclude": [],
+                "python.analysis.diagnosticSeverityOverrides": {
+                    "reportPrivateImportUsage": "none"
+                },
+                "python.testing.pytestArgs": [
+                    "${containerWorkspaceFolder}/tests/"
+                ],
+                "python.testing.unittestEnabled": false,
+                "python.testing.pytestEnabled": true,
+                // Stabilize terminal output if host is remote
+                "terminal.integrated.localEchoEnabled": "off",
+                "terminal.integrated.localEchoLatencyThreshold": -1
+            }
+        }
+    }
+}

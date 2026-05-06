@@ -1,0 +1,58 @@
+name: simpoly
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  # System libs that conda ships better than pip (LAMMPS/MPI-friendly toolchain).
+  - cython
+  # MPI toolchain for LAMMPS BUILD_MPI=on. openmpi from conda-forge ships
+  # mpicxx/mpicc/mpirun and headers all under /opt/conda/envs/simpoly.
+  - openmpi
+  - mpi4py
+  - pip:
+    # PyTorch + matching CUDA wheels.
+    - --extra-index-url https://download.pytorch.org/whl/cu130
+    - torch==2.11.0
+    # Core scientific stack — latest unless a downstream pin forces older.
+    - numpy>=1.26
+    - scipy
+    - sympy
+    - ase>=3.22
+    - torch_geometric>=2.7
+    - opt_einsum_fx
+    - packaging
+    # Equivariant ops. e3nn is only used for o3.Irreps bookkeeping; no JIT.
+    - e3nn>=0.5.6
+    # cuequivariance: 0.8.1 is the latest version that still ships the
+    # original `cuequivariance_torch.TensorProduct` module our model uses.
+    # 0.9+ replaced it with a `SegmentedPolynomial` API (different call
+    # signature); migrating would require touching core model code.
+    - cuequivariance==0.8.1
+    - cuequivariance_torch==0.8.1
+    - cuequivariance_ops_torch_cu13==0.8.1
+    # cupy is required by LAMMPS' mliap_unified_couple_kokkos.pyx whenever the
+    # KOKKOS GPU backend is used (``-k on g 1 -sf kk``); it wraps GPU-resident
+    # element/pair arrays for the Python mliap path. Must match CUDA major
+    # version of the runtime image (cu13).
+    - cupy-cuda13x
+    # simpoly runtime deps (poly_arena, poly_data, visualize, EMC wrapper).
+    # Sourced from environment.yml + environment-ci.yml so the docker image
+    # built from this file can run the full test suite.
+    - emc-pypi>=2025.8.21
+    - pandas>=2.3
+    - matplotlib>=3.10
+    - qcelemental>=0.29
+    - rdkit>=2024.9
+    - lmdb>=1.4
+    - dash>=3.3
+    - fastparquet>=2024.11
+    - click>=8.0
+    - pwlf>=2.5
+    # Dev / test tooling.
+    - pytest>=7.0
+    - nbmake>=1.5
+    - ruff
+    - black
+    - isort
+    - mypy

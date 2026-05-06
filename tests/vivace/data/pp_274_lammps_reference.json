@@ -1,0 +1,27 @@
+{
+  "tool": "internal/vivace/reference_generation/generate_lammps_reference.py",
+  "image": "msrmoldyn.azurecr.io/feynman/mdmlff:nvidia-latest",
+  "lmp_binary": "/usr/local/lammps-a100/bin/lmp_cuda",
+  "lmp_args": [
+    "-k",
+    "on",
+    "g",
+    "1",
+    "-sf",
+    "kk",
+    "-pk",
+    "kokkos",
+    "newton",
+    "on",
+    "neigh",
+    "half"
+  ],
+  "mliap_path": "/tmp/regen-cache-556484677/mdmlff/checkpoints/olden_king_3n46hvrn19/last.mliap.pt",
+  "mliap_sha256": "4cf7a9dbe089484fdf8d72420a37957e5461bd4f1bfebb0a6db9b02fc7cb2133",
+  "data": "/work/tests/vivace/data/pp_274.lmps",
+  "n_atoms": 274,
+  "atom_types": [
+    "C",
+    "H"
+  ]
+}

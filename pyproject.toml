@@ -1,0 +1,112 @@
+[project]
+name = "simpoly"
+version = "0.0.1"
+requires-python = ">=3.10"
+# Core runtime deps for poly_arena / poly_data / visualize. Lower bounds
+# only — the tuned exact versions used in the docker image live in
+# environment.yml.
+dependencies = [
+  "pandas >=2.0",
+  "numpy >=1.26",
+  "scipy >=1.11",
+  "pwlf >=2.5",
+  "ase >=3.22",
+  "matplotlib >=3.7",
+  "qcelemental >=0.29",
+  "rdkit >=2024.9",
+  "lmdb >=1.4",
+  "dash >=3.0",
+  "fastparquet >=2024.11",
+  "click >=8.0",
+  "emc-pypi >=2025.8.21",
+  "packaging",
+]
+
+[project.optional-dependencies]
+# ML stack required to import / run simpoly.vivace. Kept out of core so
+# `pip install simpoly` stays lightweight for poly_arena-only users.
+vivace = [
+  "torch >=2.5",
+  "torch_geometric >=2.7",
+  "e3nn >=0.5.6",
+  "opt_einsum_fx",
+  "sympy",
+]
+# CUDA-13-only wheels: cueq ops + cupy are pinned to a specific CUDA
+# major version, so they cannot live in core deps. Installed in the
+# docker image via environment.yml; this extra exists for users who
+# want `pip install simpoly[cuda13]` on a matching host.
+cuda13 = [
+  "cuequivariance ==0.8.1",
+  "cuequivariance_torch ==0.8.1",
+  "cuequivariance_ops_torch_cu13 ==0.8.1",
+  "cupy-cuda13x",
+]
+dev = [
+  "black >=24.0",
+  "isort >=5.12",
+  "mypy >=1.18",
+  "ruff >=0.14",
+  "pytest >=7.0",
+  "nbmake >=1.5",
+  "pandas-stubs",
+  "types-pyyaml",
+  "scipy-stubs",
+  "jupyter",
+]
+
+[tool.mypy]
+strict = true
+exclude = ["src/simpoly/vivace/"]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = [
+  "ase.*",
+  "qcelemental.*",
+  "pyemc.*",
+  "lmdb.*",
+  "pwlf.*",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+markers = [
+  "gpu: marks tests that require a GPU",
+]
+
+[tool.ty.rules]
+unused-type-ignore-comment = "ignore"
+
+[tool.ty.src]
+exclude = ["src/simpoly/vivace"]
+
+[tool.ruff]
+exclude = ["src/simpoly/vivace"]
+extend-include = ["*.ipynb"]
+line-length = 100
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.ruff.lint]
+# Check https://beta.ruff.rs/docs/rules/ for full list of rules
+extend-safe-fixes = ["UP"]
+ignore = [
+  # W605: invalid escape sequence -- triggered by pseudo-LaTeX in comments
+  "W605", # E501: Line too long -- triggered by comments and such. black deals with shortening.
+  "E501", # E402: Module level import not at top of file -- triggered by python path manipulations
+  "E402", # E741:  Do not use variables named 'l', 'o', or 'i' -- disagree with PEP8
+  "E741",
+]
+select = [
+  "E",
+  "W", # pycodestyle
+  "F", # Pyflakes
+  "UP", # pyupgrade
+  "PLE", # pylint-error
+]

@@ -1,0 +1,36 @@
+name: Lint and Format
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: environment.yml
+          environment-name: simpoly
+          cache-environment: true
+
+      - name: Run black
+        shell: micromamba-shell {0}
+        run: black --check --diff src/ tests/
+
+      - name: Run isort
+        shell: micromamba-shell {0}
+        run: isort --check-only --diff src/ tests/
+
+      - name: Run ruff
+        shell: micromamba-shell {0}
+        run: ruff check src/ tests/
