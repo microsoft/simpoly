@@ -33,8 +33,8 @@ The conda environment pins matching versions; pip resolution may differ.
 
 - **Datasets:** [microsoft/simpoly on Hugging Face](https://huggingface.co/microsoft/simpoly)
 - **Vivace checkpoints:**
-  - [`cueq-0.8.pt`](https://huggingface.co/microsoft/simpoly/resolve/main/checkpoints/cueq-0.8.pt), the ASE / Python loader (`vivace.deploy.load_model`, `vivace.calculator.MLFFCalculator`)
-  - [`cueq-0.8.mliap.pt`](https://huggingface.co/microsoft/simpoly/resolve/main/checkpoints/cueq-0.8.mliap.pt), the LAMMPS loader (`pair_style mliap unified` via `vivace.mliap`)
+  - [`vivace_v0.1.pt`](/checkpoints/vivace_v0.1.pt), the ASE / Python loader (`vivace.deploy.load_model`, `vivace.calculator.MLFFCalculator`)
+  - [`vivace_v0.1.mliap.pt`](/checkpoints/vivace_v0.1.mliap.pt), the LAMMPS loader (`pair_style mliap unified` via `vivace.mliap`)
 
 ## PolyData
 
@@ -53,7 +53,7 @@ Generate the starting configuration and input files with [`run.py`](src/simpoly/
 ```bash
 python src/simpoly/poly_arena/simulation/run.py \
     --directory mysim/ --poly-id PS --temp-k 350 \
-    --model-type mlff --mlff-path path/to/cueq-0.8.mliap.pt
+    --model-type mlff --mlff-path path/to/vivace_v0.1.mliap.pt
 ```
 
 ### Running the simulations
@@ -77,7 +77,7 @@ from simpoly.vivace.calculator import MLFFCalculator
 Z_OF_TYPE = {1: 6, 2: 1}
 
 atoms = read("tests/vivace/data/pp_274.lmps", format="lammps-data", Z_of_type=Z_OF_TYPE)
-atoms.calc = MLFFCalculator(model_path="checkpoints/cueq-0.8.pt")
+atoms.calc = MLFFCalculator(model_path="checkpoints/vivace_v0.1.pt")
 
 energy = float(atoms.get_potential_energy())          # eV
 forces = atoms.get_forces()                            # eV / Å, (N, 3)
@@ -101,7 +101,7 @@ read_data       tests/vivace/data/pp_274.lmps
 mass 1 12.011  # C
 mass 2  1.008  # H
 
-pair_style      mliap unified checkpoints/cueq-0.8.mliap.pt 0
+pair_style      mliap unified checkpoints/vivace_v0.1.mliap.pt 0
 pair_coeff      * * C H
 
 neighbor        2.0 bin
