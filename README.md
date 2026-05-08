@@ -130,4 +130,11 @@ mpirun -np 4 lmp -k on g 4 -sf kk -pk kokkos neigh half -in 21steps.in
 pytest tests/                  # full suite
 pytest tests/ -m "not gpu"     # skip GPU-only tests
 pytest tests/vivace/ -m gpu    # GPU-only end-to-end checks
+# or run lammps test in the docker
+docker run --gpus all --rm -u $(id -u):$(id -g) \
+     -e HOME=/tmp \
+     -v "$(pwd):/simpoly" -w /simpoly \
+     -e PYTHONPATH=/simpoly/src \
+     simpoly:latest \
+     pytest /simpoly/tests/vivace/test_lammps_mliap.py -xvvvs
 ```

@@ -1,4 +1,4 @@
-"""SE(3) equivariance check on the public ``olden_king`` checkpoint.
+"""SE(3) equivariance check on the public ``vivace_v0.1`` checkpoint.
 
 Adapted from feynman/projects/mdmlff/tests/test_mlff/test_models/test_symmetry.py,
 but pinned to the deployed JIT instead of an untrained tiny model.  Using the
@@ -34,20 +34,23 @@ except Exception:  # pragma: no cover
 
 
 HERE = pathlib.Path(__file__).resolve().parent
-REPO = HERE.parent
-CHECKPOINT = REPO / "checkpoints" / "olden_king" / "olden_king_3n46hvrn19_2" / "last.pt"
-POLYMER_XYZ = HERE / "data" / "test_polymer.xyz"
+REPO = HERE.parent.parent
+CHECKPOINT = REPO / "checkpoints" / "vivace_v0.1.pt"
+POLYMER_XYZ = HERE / "data" / "test_polymer.lmps"
+
+
+@pytest.fixture
+def polymer_atoms() -> ase.Atoms:
+    # Hard-coded type->Z map for tests/vivace/data/test_polymer.lmps:
+    # type 1 = C (Z=6), type 2 = H (Z=1).
+    return read(str(POLYMER_XYZ), format="lammps-data", Z_of_type={1: 6, 2: 1})
 
 
 pytestmark = [
     pytest.mark.gpu,
     pytest.mark.skipif(
         not CHECKPOINT.exists(),
-        reason=f"Public olden_king checkpoint not present at {CHECKPOINT}.",
-    ),
-    pytest.mark.skipif(
-        not POLYMER_XYZ.exists(),
-        reason=f"Test geometry {POLYMER_XYZ} missing.",
+        reason=f"Public vivace_v0.1 checkpoint not present at {CHECKPOINT}.",
     ),
 ]
 
@@ -75,7 +78,7 @@ def _evaluate(atoms: ase.Atoms, calc) -> tuple[float, np.ndarray, np.ndarray]:
 
 
 @pytest.mark.parametrize("seed", [0, 1, 2])
-def test_olden_king_se3_equivariance(seed: int) -> None:
+def test_se3_equivariance(seed: int, polymer_atoms: ase.Atoms) -> None:
     """E invariant, F transforms as R F, stress as R S R^T under rigid
     rotation + translation of the system."""
     from simpoly.vivace.calculator import MLFFCalculator
@@ -83,7 +86,7 @@ def test_olden_king_se3_equivariance(seed: int) -> None:
     R = _random_rotation(seed)
     t = np.array([0.37, -1.4, 2.1])  # small translation to also test invariance
 
-    base = read(str(POLYMER_XYZ))
+    base = polymer_atoms
     rot = base.copy()
     rot.set_positions(base.get_positions() @ R.T + t)
     if any(base.pbc):
@@ -93,7 +96,7 @@ def test_olden_king_se3_equivariance(seed: int) -> None:
     E0, F0, S0 = _evaluate(base, calc)
     E1, F1, S1 = _evaluate(rot, calc)
 
-    # Empirical noise floor on olden_king + 32-atom polymer (3 random
+    # Empirical noise floor on vivace_v0.1 + 32-atom polymer (3 random
     # rotations measured): energy is bit-exact; forces drift up to
     # ~0.14 eV/A on small-magnitude components with RMS ~0.03 (fp32
     # atomicAdd nondeterminism in cuequivariance kernels); stress
@@ -123,13 +126,13 @@ def test_olden_king_se3_equivariance(seed: int) -> None:
     assert s_max < 5e-5, f"Stress not equivariant: max abs diff = {s_max:.3e} eV/A^3"
 
 
-def test_olden_king_translation_invariance() -> None:
+def test_translation_invariance(polymer_atoms: ase.Atoms) -> None:
     """E, F, stress all invariant under pure translation (no rotation).
     Tighter tolerance than the rotation test since no equivariant
     transform is applied to outputs."""
     from simpoly.vivace.calculator import MLFFCalculator
 
-    base = read(str(POLYMER_XYZ))
+    base = polymer_atoms
     shifted = base.copy()
     shifted.set_positions(base.get_positions() + np.array([2.5, -0.4, 1.7]))
 

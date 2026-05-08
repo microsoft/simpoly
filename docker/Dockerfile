@@ -140,4 +140,7 @@ lmp = lammps(cmdargs=['-log', 'none', '-screen', 'none']); \
 lmp.close(); \
 print('lammps + torch instantiate OK')"
 
+COPY . /app/simpoly
+RUN pip install -e .
+
 CMD ["bash"]

@@ -1,0 +1,176 @@
+
+atom_style      atomic
+atom_modify map array sort 0 2.0
+units           metal
+newton          on
+read_restart       final_npt.restart
+pair_style mliap unified /checkpoints/cueq-0.8.mliap.pt 0
+pair_coeff * * C C C H
+
+mass      1      12.010999996910238 # C
+mass      2      12.010999996910238 # C
+mass      3      12.010999996910238 # C
+mass      4      1.0079999997406976 # H
+neighbor        0.5 bin
+neigh_modify    delay 50 every 2 check yes
+
+thermo_style    custom step temp density vol press ke pe ebond evdwl ecoul elong etotal spcpu
+thermo_modify   flush yes
+thermo          250
+timestep        0.0005
+
+fix fMOM all momentum 100 linear 1 1 1 angular
+
+
+# Stage: cool_000_533K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_000_533K.lammpstrj.* id type xu yu zu
+fix cool_000_533K all npt temp 533.0 533.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/0.cool_000_533K_p0.restart
+unfix cool_000_533K
+undump 1
+
+# Stage: cool_001_513K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_001_513K.lammpstrj.* id type xu yu zu
+fix cool_001_513K all npt temp 513.0 513.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/1.cool_001_513K_p0.restart
+unfix cool_001_513K
+undump 1
+
+# Stage: cool_002_493K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_002_493K.lammpstrj.* id type xu yu zu
+fix cool_002_493K all npt temp 493.0 493.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/2.cool_002_493K_p0.restart
+unfix cool_002_493K
+undump 1
+
+# Stage: cool_003_473K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_003_473K.lammpstrj.* id type xu yu zu
+fix cool_003_473K all npt temp 473.0 473.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/3.cool_003_473K_p0.restart
+unfix cool_003_473K
+undump 1
+
+# Stage: cool_004_453K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_004_453K.lammpstrj.* id type xu yu zu
+fix cool_004_453K all npt temp 453.0 453.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/4.cool_004_453K_p0.restart
+unfix cool_004_453K
+undump 1
+
+# Stage: cool_005_433K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_005_433K.lammpstrj.* id type xu yu zu
+fix cool_005_433K all npt temp 433.0 433.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/5.cool_005_433K_p0.restart
+unfix cool_005_433K
+undump 1
+
+# Stage: cool_006_413K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_006_413K.lammpstrj.* id type xu yu zu
+fix cool_006_413K all npt temp 413.0 413.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/6.cool_006_413K_p0.restart
+unfix cool_006_413K
+undump 1
+
+# Stage: cool_007_393K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_007_393K.lammpstrj.* id type xu yu zu
+fix cool_007_393K all npt temp 393.0 393.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/7.cool_007_393K_p0.restart
+unfix cool_007_393K
+undump 1
+
+# Stage: cool_008_373K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_008_373K.lammpstrj.* id type xu yu zu
+fix cool_008_373K all npt temp 373.0 373.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/8.cool_008_373K_p0.restart
+unfix cool_008_373K
+undump 1
+
+# Stage: cool_009_353K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_009_353K.lammpstrj.* id type xu yu zu
+fix cool_009_353K all npt temp 353.0 353.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/9.cool_009_353K_p0.restart
+unfix cool_009_353K
+undump 1
+
+# Stage: cool_010_333K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_010_333K.lammpstrj.* id type xu yu zu
+fix cool_010_333K all npt temp 333.0 333.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/10.cool_010_333K_p0.restart
+unfix cool_010_333K
+undump 1
+
+# Stage: cool_011_313K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_011_313K.lammpstrj.* id type xu yu zu
+fix cool_011_313K all npt temp 313.0 313.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/11.cool_011_313K_p0.restart
+unfix cool_011_313K
+undump 1
+
+# Stage: cool_012_293K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_012_293K.lammpstrj.* id type xu yu zu
+fix cool_012_293K all npt temp 293.0 293.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/12.cool_012_293K_p0.restart
+unfix cool_012_293K
+undump 1
+
+# Stage: cool_013_273K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_013_273K.lammpstrj.* id type xu yu zu
+fix cool_013_273K all npt temp 273.0 273.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/13.cool_013_273K_p0.restart
+unfix cool_013_273K
+undump 1
+
+# Stage: cool_014_253K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_014_253K.lammpstrj.* id type xu yu zu
+fix cool_014_253K all npt temp 253.0 253.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/14.cool_014_253K_p0.restart
+unfix cool_014_253K
+undump 1
+
+# Stage: cool_015_233K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_015_233K.lammpstrj.* id type xu yu zu
+fix cool_015_233K all npt temp 233.0 233.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/15.cool_015_233K_p0.restart
+unfix cool_015_233K
+undump 1
+
+# Stage: cool_016_213K
+shell mkdir restart dump
+dump 1 all custom 5000 dump/cool_016_213K.lammpstrj.* id type xu yu zu
+fix cool_016_213K all npt temp 213.0 213.0 $(100*dt) aniso 1.000 1.000 $(1000*dt)
+run 300000
+write_restart restart/16.cool_016_213K_p0.restart
+unfix cool_016_213K
+undump 1
