@@ -10,6 +10,19 @@ docker build -t simpoly -f docker/Dockerfile .
 
 The build context **must** be the repo root.
 
+To use the docker together with updated Simpoly code
+
+```bash
+docker run --gpus all --rm -u $(id -u):$(id -g) \
+     -e HOME=/tmp \
+     -v $SIMPOLY_PATH -w /simpoly \
+     -e PYTHONPATH=/simpoly/src \
+     simpoly:latest \
+     <your command>
+```
+
+See more in examples.
+
 ## Build args
 
 | Arg | Default | Notes |

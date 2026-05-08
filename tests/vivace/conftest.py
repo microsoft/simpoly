@@ -21,9 +21,9 @@ def test_data_dir() -> pathlib.Path:
 
 @pytest.fixture(scope="function")
 def test_checkpoint_pt() -> pathlib.Path:
-    return pathlib.Path(__file__).parent.parent.parent / "checkpoints" / "cueq-0.8.mliap.pt"
+    return pathlib.Path(__file__).parent.parent.parent / "checkpoints" / "vivace_v0.1.mliap.pt"
 
 
 @pytest.fixture(scope="function")
 def test_checkpoint_ase_pt() -> pathlib.Path:
-    return pathlib.Path(__file__).parent.parent.parent / "checkpoints" / "cueq-0.8.pt"
+    return pathlib.Path(__file__).parent.parent.parent / "checkpoints" / "vivace_v0.1.pt"
