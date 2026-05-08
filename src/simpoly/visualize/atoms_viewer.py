@@ -48,7 +48,7 @@ def build_checklist_options(
     disable_show_forces: bool,
     disable_show_cell: bool,
     disable_wrap_atoms: bool,
-) -> list[dash.dcc.Checklist.Options]:
+) -> list[dict[str, ty.Any]]:
     return [
         {
             "label": "Show labels",
@@ -178,7 +178,7 @@ def view(
         ],
         output=dash.Output(checklist_id, "options"),
     )
-    def update_checklist_options(idx: int) -> list[dash.dcc.Checklist.Options]:
+    def update_checklist_options(idx: int) -> list[dict[str, ty.Any]]:
         atoms = atoms_list[idx]
         has_cell = _atoms_has_cell(atoms)
         return build_checklist_options(
