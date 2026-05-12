@@ -33,6 +33,7 @@ The conda environment pins matching versions; pip resolution may differ.
 
 - **Datasets:** [microsoft/simpoly on Hugging Face](https://huggingface.co/microsoft/simpoly)
 - **Vivace checkpoints:**
+  - [Hugging Face](https://huggingface.co/microsoft/simpoly/tree/main/checkpoints)
   - [`vivace_v0.1.pt`](/checkpoints/vivace_v0.1.pt), the ASE / Python loader (`vivace.deploy.load_model`, `vivace.calculator.MLFFCalculator`)
   - [`vivace_v0.1.mliap.pt`](/checkpoints/vivace_v0.1.mliap.pt), the LAMMPS loader (`pair_style mliap unified` via `vivace.mliap`)
 
