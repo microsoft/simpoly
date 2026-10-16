@@ -31,7 +31,7 @@ class MLFFCalculator(Calculator):  # type: ignore[misc]
         Calculator.__init__(self, **kwargs)  # pyright: ignore
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        model, metadata = load_model(model_path, device=self.device)
+        model, metadata = load_model(model_path, weights_only=False, device=self.device)
 
         self.dtype = metadata[keys.DEFAULT_DTYPE]
         r_max = metadata[keys.R_MAX]

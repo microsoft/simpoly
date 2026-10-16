@@ -141,6 +141,7 @@ def save_model(
 
 def load_model(
     path: str | pathlib.Path,
+    weights_only: bool,
     device: torch.device | str = "cpu",
 ) -> tuple[torch.nn.Module, dict[str, Any]]:
     """Load a Vivace ASE-side ``.pt`` produced by :func:`save_model`.
@@ -148,7 +149,7 @@ def load_model(
     Returns the live ``nn.Module`` (already on ``device`` and in ``eval`` mode)
     and the deployment metadata dictionary.
     """
-    ase_model = torch.load(str(path), map_location=torch.device(device), weights_only=False)
+    ase_model = torch.load(str(path), map_location=torch.device(device), weights_only=weights_only)
     if not isinstance(ase_model, MLFFModelASE):
         raise TypeError(
             f"Expected a vivace.deploy.MLFFModelASE pickle at '{path}'; "

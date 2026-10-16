@@ -101,7 +101,7 @@ def test_roundtrip_pickled(tmp_path):
     model_path = tmp_path / "deployed.pt"
     save_model(model, model_path)
 
-    loaded_model, metadata = load_model(str(model_path), device=DEVICE)
+    loaded_model, metadata = load_model(str(model_path), weights_only=False, device=DEVICE)
     loaded_out = loaded_model(_make_batch(), compute_forces=True, compute_virial=True)
 
     assert torch.allclose(
