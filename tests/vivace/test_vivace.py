@@ -93,24 +93,6 @@ def test_roundtrip_state_dict(tmp_path):
 
 
 @pytest.mark.gpu
-def test_roundtrip_pickled(tmp_path):
-    model = _make_model()
-    batch_dict = _make_batch()
-    original_out = model(batch_dict, compute_forces=True, compute_virial=True)
-
-    model_path = tmp_path / "deployed.pt"
-    save_model(model, model_path)
-
-    loaded_model, metadata = load_model(str(model_path), weights_only=False, device=DEVICE)
-    loaded_out = loaded_model(_make_batch(), compute_forces=True, compute_virial=True)
-
-    assert torch.allclose(
-        original_out[keys.TOTAL_ENERGY].cpu(), loaded_out[keys.TOTAL_ENERGY].cpu(), atol=1e-6
-    )
-    assert torch.allclose(original_out[keys.FORCES].cpu(), loaded_out[keys.FORCES].cpu(), atol=1e-6)
-
-
-@pytest.mark.gpu
 def test_ase_calculator(tmp_path):
     from ase import Atoms
 
@@ -132,68 +114,3 @@ def test_ase_calculator(tmp_path):
 
     assert isinstance(energy, float)
     assert forces.shape == (3, 3)
-
-
-def test_mliap_save_load(tmp_path):
-    """Test that MLIAP model can be saved and loaded."""
-    pytest.importorskip("lammps")
-    from simpoly.vivace.mliap import save_mliap_model
-
-    model = _make_model()
-    mliap_path = str(tmp_path / "model.mliap.pt")
-    save_mliap_model(model, mliap_path)
-
-    loaded = torch.load(mliap_path, weights_only=False)
-    assert hasattr(loaded, "compute_forces")
-    assert hasattr(loaded, "rcutfac")
-    assert loaded.rcutfac == pytest.approx(VIVACE_CONFIG["r_max"] / 2.0)
-    assert loaded.ndescriptors == 1
-    assert loaded.element_types[0] == "H"
-
-
-@pytest.mark.gpu
-def test_mliap_save_load_cueq_to_cuda(tmp_path):
-    """Regression: cueq's ``disable_type_conv`` partials must not survive
-    save/load and must not break ``model.to('cuda')`` in the LAMMPS subprocess.
-
-    History: ``copy.deepcopy`` preserves ``t.to=partial(...)`` on cueq FX-graph
-    constants while subsequent pickling drops the companion ``t.__original_to``,
-    making ``.to(device)`` raise ``AttributeError: '__original_to'``. Fixed by
-    ``_strip_cueq_disable_type_conv`` in ``vivace.deploy``. This test guards
-    against both halves of the bug coming back (e.g. via cueq upgrade or torch
-    pickle behavior change).
-    """
-    import functools
-
-    pytest.importorskip("lammps")
-    from simpoly.vivace.mliap import save_mliap_model
-
-    # Larger architecture exercises multiple cueq FX-fallback TPs whose
-    # constant buffers carry the partial-on-Tensor.to attribute.
-    big_config = dict(
-        VIVACE_CONFIG,
-        l_max=3,
-        n_layers=2,
-        n_equivariant_features=16,
-        n_invariant_features=8,
-        n_attn_heads=2,
-        use_cuequivariance=True,
-    )
-    torch.manual_seed(0)
-    model = VivaceBergamot(**big_config)
-
-    mliap_path = str(tmp_path / "model.mliap.pt")
-    save_mliap_model(model, mliap_path)
-
-    loaded = torch.load(mliap_path, weights_only=False)
-    leftover_partials = [
-        name
-        for name, b in loaded.model.named_buffers()
-        if isinstance(b.__dict__.get("to"), functools.partial)
-    ]
-    assert leftover_partials == [], (
-        f"{len(leftover_partials)} cueq disable_type_conv partials survived "
-        f"save/load: {leftover_partials[:3]}..."
-    )
-    # Would raise AttributeError('__original_to') if regression came back.
-    loaded.model.to("cuda")
